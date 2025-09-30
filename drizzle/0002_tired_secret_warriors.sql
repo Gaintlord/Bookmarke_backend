@@ -1,0 +1,1 @@
+ALTER TABLE "users" ADD COLUMN "Updated At" timestamp DEFAULT now();

@@ -1,0 +1,1 @@
+ALTER TABLE "users" ADD COLUMN "cureated At" timestamp DEFAULT now();
