@@ -35,11 +35,12 @@ const signUpauthMidWare = (req, res) => __awaiter(void 0, void 0, void 0, functi
             userEmail: parseData.data.userEmail,
             userPassword: hashedPassword,
         };
+        // add user to database email pass and time
         const response = yield (0, SignUpController_1.signUpUser)(validatedData);
         if (response.status) {
-            res.status(response.detail.statusCode).json(response.status);
             //@ts-ignore
             yield (0, signUpEmailVerify_1.signUpOtpGen)(response.userEmail);
+            res.status(response.detail.statusCode).json(response.status);
         }
         else {
             res.status(response.detail.statusCode).json(response.detail.message);

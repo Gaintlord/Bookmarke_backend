@@ -26,11 +26,12 @@ export const signUpauthMidWare = async (req: Request, res: Response) => {
       userEmail: parseData.data.userEmail,
       userPassword: hashedPassword,
     };
+    // add user to database email pass and time
     const response = await signUpUser(validatedData);
     if (response.status) {
-      res.status(response.detail.statusCode).json(response.status);
       //@ts-ignore
       await signUpOtpGen(response.userEmail);
+      res.status(response.detail.statusCode).json(response.status);
     } else {
       res.status(response.detail.statusCode).json(response.detail.message);
     }

@@ -29,7 +29,7 @@ const signUpUser = (validatedData) => __awaiter(void 0, void 0, void 0, function
                 status: true,
                 userEmail: validatedData.userEmail,
                 detail: {
-                    message: "User Signed Up",
+                    message: "User Signed Up & Email sent",
                     statusCode: 200,
                 },
             };
