@@ -37,11 +37,11 @@ const redirectEmailVerify = (req, res) => __awaiter(void 0, void 0, void 0, func
         .from(dbSchemas_1.userTableDB)
         //@ts-ignore
         .where((0, drizzle_orm_1.eq)(dbSchemas_1.userTableDB.userEmail, userEmail));
-    console.log(data);
+    // console.log(data);
     // if OTP exist move forward
     if (data.length != 0) {
         const otpCheck = (_a = data[0].otp) === null || _a === void 0 ? void 0 : _a.split("+");
-        console.log(`### ${otpCheck} ###`);
+        // console.log(`### ${otpCheck} ###`);
         // otp matching
         //@ts-ignore
         if (otpCheck === undefined) {
