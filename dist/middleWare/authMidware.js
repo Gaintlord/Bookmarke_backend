@@ -40,10 +40,10 @@ const signUpauthMidWare = (req, res) => __awaiter(void 0, void 0, void 0, functi
         if (response.status) {
             //@ts-ignore
             yield (0, signUpEmailVerify_1.signUpOtpGen)(response.userEmail);
-            res.status(response.detail.statusCode).json(response.status);
+            res.status(response.detail.statusCode).json(response);
         }
         else {
-            res.status(response.detail.statusCode).json(response.detail.message);
+            res.status(response.detail.statusCode).json(response);
         }
     }
 });
