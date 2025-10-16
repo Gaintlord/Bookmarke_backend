@@ -46,11 +46,13 @@ const redirectEmailVerify = (req, res) => __awaiter(void 0, void 0, void 0, func
         //@ts-ignore
         if (otpCheck === undefined) {
             res.status(400).json({
+                status: false,
                 message: "user already verified",
             });
         }
         else if (otpCheck[0] != otp) {
             res.status(400).json({
+                status: false,
                 message: "Invalid Otp",
             });
         }
@@ -68,12 +70,14 @@ const redirectEmailVerify = (req, res) => __awaiter(void 0, void 0, void 0, func
                 //@ts-ignore
                 yield (0, userTablePatch_1.deleteOtpFromTable)(userEmail);
                 res.status(200).json({
+                    status: true,
                     message: "otp has been verified",
                 });
             }
             else {
                 // console.log("otp expired");
                 res.status(400).json({
+                    status: false,
                     message: "otp has expired",
                 });
             }
@@ -81,6 +85,7 @@ const redirectEmailVerify = (req, res) => __awaiter(void 0, void 0, void 0, func
     }
     else {
         res.status(500).json({
+            status: false,
             message: "user Does not exist",
         });
     }

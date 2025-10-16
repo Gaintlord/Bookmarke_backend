@@ -31,7 +31,7 @@ export const signUpauthMidWare = async (req: Request, res: Response) => {
     if (response.status) {
       //@ts-ignore
       await signUpOtpGen(response.userEmail);
-      res.status(response.detail.statusCode).json({ response });
+      res.status(response.detail.statusCode).json(response);
     } else {
       res.status(response.detail.statusCode).json(response);
     }

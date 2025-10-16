@@ -42,10 +42,12 @@ export const redirectEmailVerify: RequestHandler = async (
     //@ts-ignore
     if (otpCheck === undefined) {
       res.status(400).json({
+        status:false,
         message: "user already verified",
       });
     } else if (otpCheck[0] != otp) {
       res.status(400).json({
+        status:false,
         message: "Invalid Otp",
       });
     } else {
@@ -62,17 +64,20 @@ export const redirectEmailVerify: RequestHandler = async (
         //@ts-ignore
         await deleteOtpFromTable(userEmail);
         res.status(200).json({
+        status:true,
           message: "otp has been verified",
         });
       } else {
         // console.log("otp expired");
         res.status(400).json({
+                  status:false,
           message: "otp has expired",
         });
       }
     }
   } else {
     res.status(500).json({
+        status:false,
       message: "user Does not exist",
     });
   }
