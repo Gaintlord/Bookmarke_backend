@@ -9,14 +9,8 @@ export const signUpauthMidWare = async (req: Request, res: Response) => {
 
   //     IF WRONG INPUT
   if (!parseData.success) {
-    const errors = parseData.error.issues.map((i) => ({
-      code: i.code,
-      path: i.path.join("."),
-      message: i.message,
-    }));
     res.status(400).json({
       status: false,
-      errors,
     });
   }
   //    FOR RIGHT INPUT
@@ -28,12 +22,12 @@ export const signUpauthMidWare = async (req: Request, res: Response) => {
     };
     // add user to database email pass and time
     const response = await signUpUser(validatedData);
-    if (response.status) {
+    if (response.detail.status) {
       //@ts-ignore
-      await signUpOtpGen(response.userEmail);
-      res.status(response.detail.statusCode).json(response);
+      await signUpOtpGen(response.detail.userEmail);
+      res.status(response.statusCode).json(response.detail);
     } else {
-      res.status(response.detail.statusCode).json(response);
+      res.status(response.statusCode).json(response.detail);
     }
   }
 };

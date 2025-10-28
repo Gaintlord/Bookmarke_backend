@@ -1,8 +1,8 @@
 export type responseMessage = {
-  status: boolean;
-  userEmail?: string;
+  statusCode: number;
   detail: {
+    userEmail?: string;
+    status: boolean;
     message?: string;
-    statusCode: number;
   };
 };

@@ -2,12 +2,15 @@
   "dependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/nodemailer": "^7.0.2",
     "cors": "^2.8.5",
     "dotenv": "^17.2.2",
     "drizzle-orm": "^0.44.5",
     "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
     "nodemailer": "^7.0.6",
+    "nodemon": "^3.1.10",
     "pg": "^8.16.3",
     "zod": "^4.1.11"
   },

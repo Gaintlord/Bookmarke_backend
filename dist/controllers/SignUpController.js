@@ -26,31 +26,28 @@ const signUpUser = (validatedData) => __awaiter(void 0, void 0, void 0, function
                 createdAt: new Date(),
             });
             return {
-                status: true,
-                userEmail: validatedData.userEmail,
+                statusCode: 200,
                 detail: {
+                    userEmail: validatedData.userEmail,
+                    status: true,
                     message: "User Signed Up & Email sent",
-                    statusCode: 200,
                 },
             };
         }
         catch (e) {
             return {
-                status: false,
+                statusCode: 500,
                 detail: {
+                    status: false,
                     message: "Server umable to process the request",
-                    statusCode: 500,
                 },
             };
         }
     }
     else {
         return {
-            status: false,
-            detail: {
-                message: "Bad request || User already exist",
-                statusCode: 400,
-            },
+            statusCode: 400,
+            detail: { status: false, message: "Bad request || User already exist" },
         };
     }
 });
