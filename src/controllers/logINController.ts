@@ -2,7 +2,6 @@ import { eq } from "drizzle-orm";
 import { userTableDB } from "../models/dbSchemas";
 import { db } from "../utils/dataBaseUtil";
 import { hashVerify } from "../utils/hashingUtil";
-import { response } from "express";
 
 export const logInUser = async (data: {
   userEmail: string;
@@ -11,22 +10,32 @@ export const logInUser = async (data: {
   const { userEmail, userPassword } = data;
 
   //getiing hashed pass from DB
-  const userHashedPass = await db
-    .select({ userPassword: userTableDB.userPassword })
+  const userHashedPassNotp = await db
+    .select({
+      userId: userTableDB.userId,
+      userPassword: userTableDB.userPassword,
+      otp: userTableDB.otp,
+    })
     .from(userTableDB)
     .where(eq(userTableDB.userEmail, userEmail));
 
-  if (userHashedPass.length == 0) {
-    return false;
+  if (!userHashedPassNotp.length) {
+    return { status: false };
+  }
+  if (userHashedPassNotp[0].otp != null) {
+    return { status: false };
   } else {
     const comapareStatus = await hashVerify(
       userPassword,
-      userHashedPass[0].userPassword
+      userHashedPassNotp[0].userPassword
     );
     if (comapareStatus) {
-      return true;
+      return {
+        status: true,
+        userId: userHashedPassNotp[0].userId,
+      };
     } else {
-      return false;
+      return { status: false };
     }
   }
 };

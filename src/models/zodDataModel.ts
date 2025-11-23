@@ -18,3 +18,11 @@ export const emailVerify = z.object({
   userEmail: z.email(),
   otp: z.string().length(6),
 });
+
+export const userSentBokmarke = z.object({
+  userBokmarke: z.object({
+    image: z.string().max(1024),
+    link: z.url(),
+    hostName: z.string().max(512),
+  }),
+});

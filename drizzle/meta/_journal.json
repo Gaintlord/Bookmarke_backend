@@ -22,6 +22,48 @@
       "when": 1759242828807,
       "tag": "0002_tired_secret_warriors",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1762862050537,
+      "tag": "0003_tidy_starbolt",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1762862661187,
+      "tag": "0004_watery_hobgoblin",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1763536414314,
+      "tag": "0005_huge_amphibian",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1763536517782,
+      "tag": "0006_skinny_brood",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1763547714282,
+      "tag": "0007_colossal_killmonger",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1763549707184,
+      "tag": "0008_secret_johnny_storm",
+      "breakpoints": true
     }
   ]
 }

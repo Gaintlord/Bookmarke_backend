@@ -8,12 +8,7 @@ const generateOTP = () => {
 exports.generateOTP = generateOTP;
 const otpFormater = () => {
     const otp = (0, exports.generateOTP)();
-    let date = new Date();
-    const expire = Number(date) + 25 * 60 * 1000;
-    let dbString = `${String(otp)}+${expire}`;
-    return {
-        otp,
-        dbString,
-    };
+    const otpstring = otp.toString();
+    return otpstring;
 };
 exports.otpFormater = otpFormater;

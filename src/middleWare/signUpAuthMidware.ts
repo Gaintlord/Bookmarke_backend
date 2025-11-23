@@ -1,8 +1,7 @@
 import { NextFunction, Request, Response } from "express";
-import { zoduserSignUp } from "../models/zodSignUpModel";
+import { zoduserSignUp } from "../models/zodDataModel";
 import { HashFunction } from "../utils/hashingUtil";
 import { signUpUser } from "../controllers/SignUpController";
-import { signUpOtpGen } from "../controllers/signUpEmailVerify";
 
 export const signUpauthMidWare = async (req: Request, res: Response) => {
   const parseData = zoduserSignUp.safeParse(req.body);
@@ -24,7 +23,6 @@ export const signUpauthMidWare = async (req: Request, res: Response) => {
     const response = await signUpUser(validatedData);
     if (response.detail.status) {
       //@ts-ignore
-      await signUpOtpGen(response.detail.userEmail);
       res.status(response.statusCode).json(response.detail);
     } else {
       res.status(response.statusCode).json(response.detail);

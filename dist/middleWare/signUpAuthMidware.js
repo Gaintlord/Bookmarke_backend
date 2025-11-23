@@ -10,12 +10,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.signUpauthMidWare = void 0;
-const zodSignUpModel_1 = require("../models/zodSignUpModel");
+const zodDataModel_1 = require("../models/zodDataModel");
 const hashingUtil_1 = require("../utils/hashingUtil");
 const SignUpController_1 = require("../controllers/SignUpController");
-const signUpEmailVerify_1 = require("../controllers/signUpEmailVerify");
 const signUpauthMidWare = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const parseData = zodSignUpModel_1.zoduserSignUp.safeParse(req.body);
+    const parseData = zodDataModel_1.zoduserSignUp.safeParse(req.body);
     //     IF WRONG INPUT
     if (!parseData.success) {
         res.status(400).json({
@@ -33,7 +32,6 @@ const signUpauthMidWare = (req, res) => __awaiter(void 0, void 0, void 0, functi
         const response = yield (0, SignUpController_1.signUpUser)(validatedData);
         if (response.detail.status) {
             //@ts-ignore
-            yield (0, signUpEmailVerify_1.signUpOtpGen)(response.detail.userEmail);
             res.status(response.statusCode).json(response.detail);
         }
         else {

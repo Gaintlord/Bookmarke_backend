@@ -9,85 +9,65 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.redirectEmailVerify = exports.signUpOtpGen = void 0;
+exports.redirectEmailVerify = void 0;
 const drizzle_orm_1 = require("drizzle-orm");
 const dbSchemas_1 = require("../models/dbSchemas");
 const dataBaseUtil_1 = require("../utils/dataBaseUtil");
-const oneTimePassGen_1 = require("../utils/oneTimePassGen");
-const EmailSender_1 = require("../utils/EmailSender");
 const userTablePatch_1 = require("./userTablePatch");
-// create and add add otp to data base
-const signUpOtpGen = (userEmail) => __awaiter(void 0, void 0, void 0, function* () {
-    const otpString = (0, oneTimePassGen_1.otpFormater)();
-    yield dataBaseUtil_1.db
-        .update(dbSchemas_1.userTableDB)
-        .set({ otp: otpString.dbString })
-        .where((0, drizzle_orm_1.eq)(dbSchemas_1.userTableDB.userEmail, userEmail));
-    // console.log("OTP generated");
-    // sending email to client
-    (0, EmailSender_1.emailSender)(otpString.otp, userEmail);
-});
-exports.signUpOtpGen = signUpOtpGen;
-const redirectEmailVerify = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    const { userEmail, otp } = req.query;
-    //  selecting the email and getting the otp
+const tokenController_1 = require("./tokenController");
+const redirectEmailVerify = (userEmail, sentOtp, userIp, userAgent) => __awaiter(void 0, void 0, void 0, function* () {
     const data = yield dataBaseUtil_1.db
-        .select({ otp: dbSchemas_1.userTableDB.otp })
+        .select({
+        otp: dbSchemas_1.userTableDB.otp,
+        createdAt: dbSchemas_1.userTableDB.createdAt,
+        userId: dbSchemas_1.userTableDB.userId,
+    })
         .from(dbSchemas_1.userTableDB)
         //@ts-ignore
         .where((0, drizzle_orm_1.eq)(dbSchemas_1.userTableDB.userEmail, userEmail));
-    // console.log(data);
-    // if OTP exist move forward
-    if (data.length != 0) {
-        const otpCheck = (_a = data[0].otp) === null || _a === void 0 ? void 0 : _a.split("+");
-        // console.log(`### ${otpCheck} ###`);
-        // otp matching
-        //@ts-ignore
-        if (otpCheck === undefined) {
-            res.status(400).json({
-                status: false,
-                message: "user already verified",
-            });
-        }
-        else if (otpCheck[0] != otp) {
-            res.status(400).json({
-                status: false,
-                message: "Invalid Otp",
-            });
-        }
-        else {
-            // verifying expiry
-            //@ts-ignore
-            const expTime = Number(otpCheck[1]) + 21 * 60 * 1000;
-            console.log(expTime);
-            const now = new Date();
-            console.log(now);
-            // console.log(new Date(expTime));
-            // console.log(now);
-            if (Number(now) < expTime) {
-                // console.log("otp verified");
-                //@ts-ignore
-                yield (0, userTablePatch_1.deleteOtpFromTable)(userEmail);
-                res.status(200).json({
-                    status: true,
-                    message: "otp has been verified",
-                });
-            }
-            else {
-                // console.log("otp expired");
-                res.status(400).json({
-                    status: false,
-                    message: "otp has expired",
-                });
-            }
-        }
+    console.log(data);
+    if (data.length == 0) {
+        return {
+            status: false,
+            message: "Invalid Otp",
+        };
     }
     else {
-        res.status(500).json({
-            status: false,
-            message: "user Does not exist",
-        });
+        const { otp, createdAt, userId } = data[0];
+        if (otp === undefined) {
+            return {
+                status: false,
+                message: "unverified",
+            };
+        }
+        if (otp != sentOtp) {
+            return {
+                status: false,
+                message: "Invalid Otp",
+            };
+        }
+        else {
+            const nowTime = new Date(Date.now());
+            //@ts-ignore
+            const expiredTime = createdAt.getTime() + 30 * 60 * 1000;
+            if (nowTime.getTime() < expiredTime) {
+                yield (0, userTablePatch_1.deleteOtpFromTable)(userEmail);
+                const { refreshToken, accessToken, expiration } = yield (0, tokenController_1.createAndStoreTokens)(userEmail, userId, userIp, userAgent);
+                return {
+                    refreshToken,
+                    accessToken,
+                    expiration,
+                    status: true,
+                    message: "verified",
+                };
+            }
+            else {
+                return {
+                    status: false,
+                    message: "expired",
+                };
+            }
+        }
     }
 });
 exports.redirectEmailVerify = redirectEmailVerify;

@@ -10,11 +10,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LogInAuthMidware = void 0;
-const zodSignUpModel_1 = require("../models/zodSignUpModel");
+const zodDataModel_1 = require("../models/zodDataModel");
 const logINController_1 = require("../controllers/logINController");
-const accesstoken_1 = require("../utils/accesstoken");
+const tokenController_1 = require("../controllers/tokenController");
 const LogInAuthMidware = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const parseData = zodSignUpModel_1.zoduserSignUp.safeParse(req.body);
+    console.log(req.get("User-Agent"));
+    const userIp = req.ip;
+    const parseData = zodDataModel_1.zoduserSignUp.safeParse(req.body);
     if (!parseData.success) {
         res.status(401).json({
             status: false,
@@ -22,23 +24,26 @@ const LogInAuthMidware = (req, res) => __awaiter(void 0, void 0, void 0, functio
     }
     else {
         const response = yield (0, logINController_1.logInUser)(parseData.data);
-        if (!response) {
+        if (!response.status) {
             res.status(401).json({
                 status: false,
+                err: "unsanitized credentials",
             });
         }
         else {
             // Access token and Refresh token
-            const acessToken = yield (0, accesstoken_1.createAccessToken)(parseData.data.userEmail);
-            const refreshToken = yield (0, accesstoken_1.createRefreshToken)(parseData.data.userEmail);
-            sessionStorage.setItem("accessToken", acessToken);
+            const { refreshToken, accessToken, expiration } = yield (0, tokenController_1.createAndStoreTokens)(parseData.data.userEmail, 
+            //@ts-ignore
+            response.userId, userIp, req.get("User-Agent"));
             res.cookie("refreshToken", refreshToken, {
                 httpOnly: true,
                 sameSite: "strict",
                 secure: false,
-                maxAge: 14 * 24 * 60 * 60 * 1000,
+                maxAge: expiration,
             });
-            res.status(200).json({ status: false });
+            res
+                .status(200)
+                .json({ status: true, accessToken: accessToken, dr_tag: refreshToken });
         }
     }
 });

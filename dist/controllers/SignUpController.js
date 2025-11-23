@@ -10,45 +10,46 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.signUpUser = void 0;
-const drizzle_orm_1 = require("drizzle-orm");
 const dbSchemas_1 = require("../models/dbSchemas");
 const dataBaseUtil_1 = require("../utils/dataBaseUtil");
+const oneTimePassGen_1 = require("../utils/oneTimePassGen");
+const EmailSender_1 = require("../utils/EmailSender");
 const signUpUser = (validatedData) => __awaiter(void 0, void 0, void 0, function* () {
-    const data = yield dataBaseUtil_1.db
-        .select({ email: dbSchemas_1.userTableDB.userEmail })
-        .from(dbSchemas_1.userTableDB)
-        .where((0, drizzle_orm_1.eq)(dbSchemas_1.userTableDB.userEmail, validatedData.userEmail));
-    if (data.length == 0) {
-        try {
-            yield dataBaseUtil_1.db.insert(dbSchemas_1.userTableDB).values({
+    let otp = (0, oneTimePassGen_1.otpFormater)();
+    try {
+        yield dataBaseUtil_1.db.insert(dbSchemas_1.userTableDB).values({
+            userEmail: validatedData.userEmail,
+            userPassword: validatedData.userPassword,
+            createdAt: new Date(Date.now()),
+            otp: otp,
+        });
+        (0, EmailSender_1.emailSender)(otp, validatedData.userEmail);
+        return {
+            statusCode: 200,
+            detail: {
                 userEmail: validatedData.userEmail,
-                userPassword: validatedData.userPassword,
-                createdAt: new Date(),
-            });
+                status: true,
+                message: "User Signed Up",
+            },
+        };
+    }
+    catch (err) {
+        // @ts-ignore
+        if (err.cause.code === "23505") {
             return {
-                statusCode: 200,
-                detail: {
-                    userEmail: validatedData.userEmail,
-                    status: true,
-                    message: "User Signed Up & Email sent",
-                },
+                statusCode: 400,
+                detail: { status: false, message: "Bad request" },
             };
         }
-        catch (e) {
+        else {
             return {
                 statusCode: 500,
                 detail: {
                     status: false,
-                    message: "Server umable to process the request",
+                    message: "Server unable to process the request",
                 },
             };
         }
-    }
-    else {
-        return {
-            statusCode: 400,
-            detail: { status: false, message: "Bad request || User already exist" },
-        };
     }
 });
 exports.signUpUser = signUpUser;

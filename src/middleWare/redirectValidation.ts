@@ -1,18 +1,40 @@
-import { NextFunction, Request, RequestHandler, Response } from "express";
-import { emailVerify } from "../models/zodSignUpModel";
+import { Request, RequestHandler, Response } from "express";
+import { emailVerify } from "../models/zodDataModel";
+import { redirectEmailVerify } from "../controllers/signUpEmailVerifyController";
 
-export const redirectValidation: RequestHandler = (
+export const redirectValidation: RequestHandler = async (
   req: Request,
-  res: Response,
-  next: NextFunction
+  res: Response
 ) => {
-  const data = emailVerify.safeParse(req.query);
+  const parsedData = emailVerify.safeParse(req.query);
 
-  if (!data.success) {
+  if (!parsedData.success) {
     res.status(401).json({
       message: "Unsanitized Data query",
     });
   } else {
-    next();
+    const response = await redirectEmailVerify(
+      parsedData.data.userEmail,
+      parsedData.data.otp,
+      req.ip,
+      req.get("User-Agent")
+    );
+
+    if (response.status) {
+      res.cookie("DR_TAG_TOKEN", response.refreshToken, {
+        httpOnly: true,
+        sameSite: "strict",
+        secure: false,
+        maxAge: response.expiration,
+      });
+      res.status(201).json({
+        status: true,
+        message: response.message,
+        accessToken: response.accessToken,
+        dr_Tag: response.refreshToken,
+      });
+    } else {
+      res.status(400).json(response.message);
+    }
   }
 };

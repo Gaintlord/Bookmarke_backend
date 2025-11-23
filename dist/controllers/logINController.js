@@ -17,21 +17,30 @@ const hashingUtil_1 = require("../utils/hashingUtil");
 const logInUser = (data) => __awaiter(void 0, void 0, void 0, function* () {
     const { userEmail, userPassword } = data;
     //getiing hashed pass from DB
-    const userHashedPass = yield dataBaseUtil_1.db
-        .select({ userPassword: dbSchemas_1.userTableDB.userPassword })
+    const userHashedPassNotp = yield dataBaseUtil_1.db
+        .select({
+        userId: dbSchemas_1.userTableDB.userId,
+        userPassword: dbSchemas_1.userTableDB.userPassword,
+        otp: dbSchemas_1.userTableDB.otp,
+    })
         .from(dbSchemas_1.userTableDB)
         .where((0, drizzle_orm_1.eq)(dbSchemas_1.userTableDB.userEmail, userEmail));
-    console.log(userHashedPass);
-    if (userHashedPass.length == 0) {
-        return false;
+    if (!userHashedPassNotp.length) {
+        return { status: false };
+    }
+    if (userHashedPassNotp[0].otp != null) {
+        return { status: false };
     }
     else {
-        const comapareStatus = yield (0, hashingUtil_1.hashVerify)(userPassword, userHashedPass[0].userPassword);
+        const comapareStatus = yield (0, hashingUtil_1.hashVerify)(userPassword, userHashedPassNotp[0].userPassword);
         if (comapareStatus) {
-            return true;
+            return {
+                status: true,
+                userId: userHashedPassNotp[0].userId,
+            };
         }
         else {
-            return false;
+            return { status: false };
         }
     }
 });
