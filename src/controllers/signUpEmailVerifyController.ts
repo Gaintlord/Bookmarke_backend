@@ -45,12 +45,16 @@ export const redirectEmailVerify = async (
       const expiredTime = createdAt.getTime() + 30 * 60 * 1000;
       if (nowTime.getTime() < expiredTime) {
         await deleteOtpFromTable(userEmail);
-        const { refreshToken, accessToken, expiration } =
-          await createAndStoreTokens(userEmail, userId, userIp, userAgent);
+        const { refreshToken, accessToken } = await createAndStoreTokens(
+          userEmail,
+          userId,
+          userIp,
+          userAgent
+        );
         return {
           refreshToken,
           accessToken,
-          expiration,
+
           status: true,
           message: "verified",
         };

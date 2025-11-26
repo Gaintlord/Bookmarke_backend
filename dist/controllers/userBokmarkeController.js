@@ -13,10 +13,10 @@ exports.addUserBookmarke = void 0;
 const drizzle_orm_1 = require("drizzle-orm");
 const dbSchemas_1 = require("../models/dbSchemas");
 const dataBaseUtil_1 = require("../utils/dataBaseUtil");
-const addUserBookmarke = (image, link, hostName) => __awaiter(void 0, void 0, void 0, function* () {
+const addUserBookmarke = (image, link, hostName, userId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield dataBaseUtil_1.db.insert(dbSchemas_1.bokmarkeTable).values({
-            userId: 45,
+            userId: userId,
             pageLink: link,
             imageLink: image,
             hostName: hostName,
@@ -32,7 +32,7 @@ const addUserBookmarke = (image, link, hostName) => __awaiter(void 0, void 0, vo
                 .where((0, drizzle_orm_1.eq)(dbSchemas_1.bokmarkeTable.pageLink, link));
         }
         else {
-            console.log(`error for user ${45} at ${new Date()} :\n\n`, err);
+            console.log(`error for user ${userId} at ${new Date()} :\n\n`, err);
         }
     }
 });

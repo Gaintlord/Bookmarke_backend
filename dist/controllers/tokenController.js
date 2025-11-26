@@ -18,7 +18,7 @@ const createAndStoreTokens = (email, id, userIp, userAgent) => __awaiter(void 0,
     const refreshToken = yield (0, accesstoken_1.createRefreshToken)(email, id.toString());
     const accessToken = yield (0, accesstoken_1.createAccessToken)(email, id.toString());
     const hashedToken = yield (0, hashingUtil_1.HashFunction)(refreshToken);
-    const expiration = 15 * 24 * 60 * 60 * 1000;
+    const expiration = 30 * 24 * 60 * 60 * 1000;
     yield dataBaseUtil_1.db.insert(dbSchemas_1.refreshTokenTable).values({
         userId: id,
         tokenHash: hashedToken,

@@ -35,7 +35,7 @@ const LogInAuthMidware = (req, res) => __awaiter(void 0, void 0, void 0, functio
             const { refreshToken, accessToken, expiration } = yield (0, tokenController_1.createAndStoreTokens)(parseData.data.userEmail, 
             //@ts-ignore
             response.userId, userIp, req.get("User-Agent"));
-            res.cookie("refreshToken", refreshToken, {
+            res.cookie("DR_TAG_TOKEN", refreshToken, {
                 httpOnly: true,
                 sameSite: "strict",
                 secure: false,

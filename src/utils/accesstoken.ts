@@ -1,4 +1,4 @@
-import jwt, { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
+import jwt, { TokenExpiredError } from "jsonwebtoken";
 
 const accessJwtSecret = process.env.JWT_SECRET_A || "SherhiKehde";
 const refreshJwtSecret = process.env.JWT_SECRET_R || "cheetahhiKehde";
@@ -51,4 +51,8 @@ export async function verifyRefreshToken(token: string) {
       };
     }
   }
+}
+export async function decodeRefreshToken(token: string) {
+  const decoded = jwt.decode(token);
+  return decoded;
 }

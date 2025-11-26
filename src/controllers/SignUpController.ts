@@ -1,4 +1,3 @@
-import { eq } from "drizzle-orm";
 import { userTableDB } from "../models/dbSchemas";
 import { db } from "../utils/dataBaseUtil";
 import { responseMessage } from "../types/tsTypes";

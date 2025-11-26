@@ -7,8 +7,8 @@ export const userReqAuth = async (
   res: Response,
   next: NextFunction
 ) => {
-  console.log(req.body);
   const headerPayload = req.headers["authorization"];
+  console.log(headerPayload);
   if (!headerPayload) {
     return res.status(401).json({ err: "Missing Header" });
   }

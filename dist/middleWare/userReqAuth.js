@@ -13,7 +13,7 @@ exports.userReqAuth = void 0;
 const accesstoken_1 = require("../utils/accesstoken");
 // import cookieParser from "cookie-parser";
 const userReqAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("reached here");
+    console.log(req.body);
     const headerPayload = req.headers["authorization"];
     if (!headerPayload) {
         return res.status(401).json({ err: "Missing Header" });
@@ -25,16 +25,22 @@ const userReqAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
     if (!accessToken) {
         return res.status(401).json({ err: "Missing Token" });
     }
+    console.log(accessToken);
     const verifiedToken = yield (0, accesstoken_1.verifyAccesToken)(accessToken);
     console.log(verifiedToken);
-    if (!verifiedToken.status) {
-        if (verifiedToken.err == "jwt expired") {
-            return res.status(200).json({ err: "YL203" });
+    if (verifiedToken.status) {
+        console.log(verifiedToken.err);
+        if (verifiedToken.err === "expiredToken") {
+            return res.status(200).header("AC_ERR", "YL203").json({ err: "YL203" });
         }
         else {
             return res.status(401).json({ err: "Invalid Token" });
         }
     }
+    //@ts-ignore
+    req.body = req.body;
+    //@ts-ignore
+    req.userid = verifiedToken.userId;
     next();
 });
 exports.userReqAuth = userReqAuth;

@@ -2,12 +2,11 @@ import { eq } from "drizzle-orm";
 import { bokmarkeTable } from "../models/dbSchemas";
 import { db } from "../utils/dataBaseUtil";
 
-
-export const addUserBookmarke = async (
+export const addUserBookmarkeToDb = async (
   image: string,
   link: string,
   hostName: string,
-  userId:number,
+  userId: number
 ) => {
   try {
     await db.insert(bokmarkeTable).values({
@@ -15,11 +14,10 @@ export const addUserBookmarke = async (
       pageLink: link,
       imageLink: image,
       hostName: hostName,
-
     });
   } catch (err) {
     const timeNow = new Date();
-// @ts-ignore
+    // @ts-ignore
     if (err.cause.code === "23505") {
       await db
         .update(bokmarkeTable)

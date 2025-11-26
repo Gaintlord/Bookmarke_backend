@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { zoduserSignUp } from "../models/zodDataModel";
 import { logInUser } from "../controllers/logINController";
 import { createAndStoreTokens } from "../controllers/tokenController";
+import { refreshTokenExp } from "../utils/expirationManager";
 
 export const LogInAuthMidware = async (req: Request, res: Response) => {
   console.log(req.get("User-Agent"));
@@ -23,20 +24,19 @@ export const LogInAuthMidware = async (req: Request, res: Response) => {
       });
     } else {
       // Access token and Refresh token
-      const { refreshToken, accessToken, expiration } =
-        await createAndStoreTokens(
-          parseData.data.userEmail,
-          //@ts-ignore
-          response.userId,
-          userIp,
-          req.get("User-Agent")
-        );
+      const { refreshToken, accessToken } = await createAndStoreTokens(
+        parseData.data.userEmail,
+        //@ts-ignore
+        response.userId,
+        userIp,
+        req.get("User-Agent")
+      );
 
       res.cookie("DR_TAG_TOKEN", refreshToken, {
         httpOnly: true,
         sameSite: "strict",
         secure: false,
-        maxAge: expiration,
+        maxAge: refreshTokenExp,
       });
       res
         .status(200)

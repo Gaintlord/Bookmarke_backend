@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.bookmarkeRoute = void 0;
 const express_1 = __importDefault(require("express"));
 const userReqAuth_1 = require("../middleWare/userReqAuth");
+const userSentBookmarkAuth_1 = require("../middleWare/userSentBookmarkAuth");
 exports.bookmarkeRoute = express_1.default.Router();
 // bookmarkeRoute.post("/adddata", userReqAuth);
-exports.bookmarkeRoute.post("/storelink", userReqAuth_1.userReqAuth);
+exports.bookmarkeRoute.post("/storelink", userReqAuth_1.userReqAuth, userSentBookmarkAuth_1.userSentBookmarkeAuth);

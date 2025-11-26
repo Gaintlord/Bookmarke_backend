@@ -18,13 +18,15 @@ exports.refreshTokenTable = (0, pg_core_3.pgTable)("refreshTokens", {
     userId: (0, pg_core_3.integer)()
         .references(() => exports.userTableDB.userId, { onDelete: "cascade" })
         .notNull(),
-    tokenHash: (0, pg_core_3.varchar)({ length: 512 }).notNull(),
+    tokenHash: (0, pg_core_3.varchar)({ length: 64 }).notNull(),
     userAgent: (0, pg_core_3.varchar)({ length: 255 }),
     ipAddress: (0, pg_core_3.varchar)({ length: 64 }),
     expiresAt: (0, pg_core_2.timestamp)().notNull(),
     revoked: (0, pg_core_3.boolean)().default(false).notNull(),
     createdAt: (0, pg_core_2.timestamp)().defaultNow().notNull(),
-});
+}, (table) => [
+    (0, pg_core_1.index)("by_hashed_token").on(table.tokenHash)
+]);
 exports.bokmarkeTable = (0, pg_core_3.pgTable)("bokmarkeTable", {
     bokmarkeId: (0, pg_core_3.integer)().generatedAlwaysAsIdentity().primaryKey(),
     userId: (0, pg_core_3.integer)()

@@ -21,7 +21,7 @@ exports.emailVerify = zod_1.default.object({
 });
 exports.userSentBokmarke = zod_1.default.object({
     userBokmarke: zod_1.default.object({
-        image: zod_1.default.string(),
+        image: zod_1.default.string().max(1024),
         link: zod_1.default.url(),
         hostName: zod_1.default.string().max(512),
     }),

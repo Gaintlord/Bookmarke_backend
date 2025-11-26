@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.redirectValidation = void 0;
 const zodDataModel_1 = require("../models/zodDataModel");
-const signUpEmailVerify_1 = require("../controllers/signUpEmailVerify");
+const signUpEmailVerifyController_1 = require("../controllers/signUpEmailVerifyController");
 const redirectValidation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const parsedData = zodDataModel_1.emailVerify.safeParse(req.query);
     if (!parsedData.success) {
@@ -20,9 +20,9 @@ const redirectValidation = (req, res) => __awaiter(void 0, void 0, void 0, funct
         });
     }
     else {
-        const response = yield (0, signUpEmailVerify_1.redirectEmailVerify)(parsedData.data.userEmail, parsedData.data.otp, req.ip, req.get("User-Agent"));
+        const response = yield (0, signUpEmailVerifyController_1.redirectEmailVerify)(parsedData.data.userEmail, parsedData.data.otp, req.ip, req.get("User-Agent"));
         if (response.status) {
-            res.cookie("refreshToken", response.refreshToken, {
+            res.cookie("DR_TAG_TOKEN", response.refreshToken, {
                 httpOnly: true,
                 sameSite: "strict",
                 secure: false,

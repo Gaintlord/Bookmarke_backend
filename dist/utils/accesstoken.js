@@ -56,7 +56,7 @@ function createAccessToken(email, userId) {
 }
 function createRefreshToken(email, userId) {
     return __awaiter(this, void 0, void 0, function* () {
-        return jsonwebtoken_1.default.sign({ email, userId }, refreshJwtSecret, { expiresIn: "15d" });
+        return jsonwebtoken_1.default.sign({ email, userId }, refreshJwtSecret, { expiresIn: "30d" });
     });
 }
 function verifyAccesToken(token) {
@@ -66,18 +66,18 @@ function verifyAccesToken(token) {
             return decoded;
         }
         catch (err) {
-            // @ts-ignore
-            if (err instanceof jsonwebtoken_1.JsonWebTokenError) {
-                return {
-                    status: false,
-                    err: err.message,
-                };
-            }
-            if (err instanceof jsonwebtoken_1.TokenExpiredError)
+            if (err instanceof jsonwebtoken_1.TokenExpiredError) {
                 return {
                     status: true,
                     err: "expiredToken",
                 };
+            }
+            else {
+                return {
+                    status: true,
+                    err: "invalidToken",
+                };
+            }
         }
     });
 }
@@ -88,8 +88,18 @@ function verifyRefreshToken(token) {
             return decoded;
         }
         catch (err) {
-            // @ts-ignore
-            return err;
+            if (err instanceof jsonwebtoken_1.TokenExpiredError) {
+                return {
+                    status: true,
+                    err: "expiredToken",
+                };
+            }
+            else {
+                return {
+                    status: true,
+                    err: "invalidToken",
+                };
+            }
         }
     });
 }
